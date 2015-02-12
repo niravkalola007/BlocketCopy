@@ -1,16 +1,22 @@
 package com.nkdroid.blocketcopy.UI;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,6 +25,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nkdroid.blocketcopy.util.AppUtils;
 import com.nkdroid.blocketcopy.R;
@@ -31,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private ListView leftDrawerList;
+    private ListView rightDrawerList;
     private ArrayAdapter<String> navigationDrawerAdapter;
     private String[] leftSliderData = {"Home", "Home", "Home", "Home", };
 
@@ -66,6 +74,7 @@ public class MainActivity extends ActionBarActivity {
 
         //  btnLogout = (ButtonRectangle)findViewById(R.id.btnLogout);
         leftDrawerList = (ListView) findViewById(R.id.left_drawer);
+        rightDrawerList = (ListView) findViewById(R.id.right_drawer);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#494949"));
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -213,11 +222,35 @@ public class MainActivity extends ActionBarActivity {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 
+//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
+//                    drawerLayout.closeDrawer(rightDrawerList);
+//                }
+//                if(drawerLayout.isDrawerOpen(rightDrawerList)){
+//                    drawerLayout.closeDrawer(leftDrawerList);
+//                }
+
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                if(drawerLayout.isDrawerOpen(leftDrawerList)){
+                    drawerLayout.closeDrawer(rightDrawerList);
+                }else {
+
+                }
+                if(drawerLayout.isDrawerOpen(rightDrawerList)){
+                    drawerLayout.closeDrawer(leftDrawerList);
+                }
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+                if(drawerView == leftDrawerList){
+                    super.onDrawerSlide(drawerView, slideOffset);
+                }
+
             }
         };
         drawerLayout.setDrawerListener(drawerToggle);
@@ -234,22 +267,48 @@ public class MainActivity extends ActionBarActivity {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
-/*
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_my_drawer, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Do something when collapsed
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do something when expanded
+                return true;  // Return true to expand action view
+            }
+        });
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
+            Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        if (id == R.id.action_filter) {
+            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
+
+            if(drawerLayout.isDrawerOpen(rightDrawerList)){
+                drawerLayout.closeDrawer(rightDrawerList);
+            } else {
+                drawerLayout.openDrawer(rightDrawerList);
+            }
             return true;
         }
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 }
