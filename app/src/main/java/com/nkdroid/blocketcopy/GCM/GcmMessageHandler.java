@@ -15,8 +15,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.webmyne.paylabas.userapp.base.MyDrawerActivity;
-import com.webmyne.paylabas_user.R;
+import com.nkdroid.blocketcopy.UI.MainActivity;
+import com.nkdroid.blocketcopy.R;
 
 
 public class GcmMessageHandler extends IntentService {
@@ -79,12 +79,12 @@ public class GcmMessageHandler extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MyDrawerActivity.class).putExtra("is_from_notification", true), 0);
+                new Intent(this, MainActivity.class).putExtra("is_from_notification", true), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setAutoCancel(true)
-                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle(response.getString("contentTitle").toString())
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(response.getString("message").toString()))
                         .setContentText(response.getString("message").toString());

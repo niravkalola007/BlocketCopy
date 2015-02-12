@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nkdroid.blocketcopy" >
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,31 +17,38 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="com.nkdroid.blocketcopy.permission.C2D_MESSAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:name=".UI.SplashActivity"
+            android:label="@string/title_activity_splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver
-            android:name="com.nkdroid.blocketcopy.GCM.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-                <category android:name="com.webmyne.rightway" />
-            </intent-filter>
+        <activity
+            android:name=".UI.MainActivity"
+            android:label="@string/app_name" >
+
+        </activity>
+
+
+        <receiver
+            android:name=".GCM.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+
         </receiver>
 
-        <service android:name="com.nkdroid.blocketcopy.GCM.GcmMessageHandler" />
+        <service android:name=".GCM.GcmMessageHandler" />
     </application>
 
 </manifest>
