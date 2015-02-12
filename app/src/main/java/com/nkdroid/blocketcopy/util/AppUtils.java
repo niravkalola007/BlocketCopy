@@ -1,4 +1,4 @@
-package com.nkdroid.blocketcopy.AppConstants;
+package com.nkdroid.blocketcopy.util;
 
 import android.content.Context;
 import android.content.res.Resources;

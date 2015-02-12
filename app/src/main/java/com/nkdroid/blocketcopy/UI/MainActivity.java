@@ -4,6 +4,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,10 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.nkdroid.blocketcopy.AppConstants.AppUtils;
+import com.nkdroid.blocketcopy.util.AppUtils;
 import com.nkdroid.blocketcopy.R;
 
 
@@ -54,10 +54,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         initDrawer();
-//        FragmentManager manager = getSupportFragmentManager();
-//        FragmentTransaction ft = manager.beginTransaction();
-//        ft.replace(R.id.main_container, new MyAccountFragment());
-//        ft.commit();
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(R.id.main_container, new HomeFragment());
+        ft.commit();
 
     }
 
