@@ -40,17 +40,21 @@
 
         <!-- navigation drawer right-->
 
-
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayoutRight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
             <ListView
-                android:layout_gravity="right|end"
+                android:layout_gravity="bottom|end"
                 android:id="@+id/right_drawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:background="#fff"
+                android:background="@color/blue"
 
                 android:dividerHeight="1dp"
                 />
+        </android.support.v4.widget.DrawerLayout>
 
 
     </android.support.v4.widget.DrawerLayout>

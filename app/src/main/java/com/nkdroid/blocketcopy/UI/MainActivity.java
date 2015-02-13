@@ -38,6 +38,8 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private ListView leftDrawerList;
+    private DrawerLayout drawerLayoutRight;
+    private ActionBarDrawerToggle drawerToggleRight;
     private ListView rightDrawerList;
     private ArrayAdapter<String> navigationDrawerAdapter;
     private String[] leftSliderData = {"Home", "Home", "Home", "Home", };
@@ -78,6 +80,7 @@ public class MainActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#494949"));
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawerLayoutRight = (DrawerLayout) findViewById(R.id.drawerLayoutRight);
         navigationDrawerAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_activated_1, android.R.id.text1, leftSliderData);
         leftDrawerList.setAdapter(new lViewadapter());
 
@@ -218,6 +221,14 @@ public class MainActivity extends ActionBarActivity {
 
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+                drawerLayoutRight.closeDrawer(rightDrawerList);
+//                Toast.makeText(MainActivity.this, "abc", Toast.LENGTH_SHORT).show();
+            }
+
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -234,38 +245,63 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                if(drawerLayout.isDrawerOpen(leftDrawerList)){
-                    drawerLayout.closeDrawer(rightDrawerList);
-                }else {
+//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
+//                    drawerLayoutRight.closeDrawer(rightDrawerList);
+//                }
 
-                }
-                if(drawerLayout.isDrawerOpen(rightDrawerList)){
-                    drawerLayout.closeDrawer(leftDrawerList);
-                }
+//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
+//                    drawerLayout.closeDrawer(rightDrawerList);
+//                }
+//
+//                if(drawerLayout.isDrawerOpen(rightDrawerList)){
+//                    drawerLayout.closeDrawer(leftDrawerList);
+//                }
+            }
+
+        };
+
+
+        drawerLayout.setDrawerListener(drawerToggle);
+
+        drawerToggleRight = new ActionBarDrawerToggle(this, drawerLayoutRight,R.string.drawer_open, R.string.drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+
+//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
+//                    drawerLayout.closeDrawer(rightDrawerList);
+//                }
+//                if(drawerLayout.isDrawerOpen(rightDrawerList)){
+//                    drawerLayout.closeDrawer(leftDrawerList);
+//                }
+
             }
 
             @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
 
-                if(drawerView == leftDrawerList){
-                    super.onDrawerSlide(drawerView, slideOffset);
-                }
 
             }
+
+
         };
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayoutRight.setDrawerListener(drawerToggleRight);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
+//        drawerToggleRight.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+//        drawerToggleRight.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -297,16 +333,21 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         if (id == R.id.action_filter) {
-            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
+            drawerLayout.closeDrawer(leftDrawerList);
+            if(drawerLayoutRight.isDrawerOpen(rightDrawerList)){
+                drawerLayoutRight.closeDrawer(rightDrawerList);
 
-            if(drawerLayout.isDrawerOpen(rightDrawerList)){
-                drawerLayout.closeDrawer(rightDrawerList);
-            } else {
-                drawerLayout.openDrawer(rightDrawerList);
+            }else {
+                drawerLayoutRight.openDrawer(rightDrawerList);
             }
+
             return true;
         }
         if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        if (drawerToggleRight.onOptionsItemSelected(item)) {
             return true;
         }
         return super.onOptionsItemSelected(item);
