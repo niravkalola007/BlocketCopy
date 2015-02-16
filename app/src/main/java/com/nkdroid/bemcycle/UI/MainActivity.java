@@ -143,8 +143,8 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     case 2:
 
-                        Intent intentService=new Intent(MainActivity.this,CustomerServiceActivity.class);
-                        startActivity(intentService);
+//                        Intent intentService=new Intent(MainActivity.this,CustomerServiceActivity.class);
+//                        startActivity(intentService);
                         break;
 
 
