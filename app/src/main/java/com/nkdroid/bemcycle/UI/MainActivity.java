@@ -80,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
     private String[] leftSliderData = {"Adverts", "Submit Advert", "Customer service" };
     private  List<ParseObject> mDataset;
     private  List<ParseObject> mDatasetFiltered;
-
+    private String searchingValue="";
     private int[] imagelist = {R.drawable.ic_action_search,
             R.drawable.ic_submit_advert,
             R.drawable.ic_communication_email,
@@ -164,13 +164,55 @@ public class MainActivity extends ActionBarActivity {
                                             advertTypeList.add(0,new AdvertType("","Select Advert Type"));
                                             productList.addAll(sharedPreferenceProductTypes.loadProductTypes(MainActivity.this));
                                             productList.add(0,new ProductType("","Select Product Type"));
+
+
                                             CityAdapter cityAdapter=new CityAdapter(MainActivity.this,R.layout.item_row,cityTypeList);
                                             spcityType.setAdapter(cityAdapter);
+                                            spcityType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                @Override
+                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+//                                                    Toast.makeText(MainActivity.this, searchingValue+"", Toast.LENGTH_SHORT).show();
+                                                    HomeFragment homeFragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                                                    homeFragment.parseAdapter.filter(searchingValue,productList.get(spProductType.getSelectedItemPosition()).ProductName,cityTypeList.get(spcityType.getSelectedItemPosition()).cityName,advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+                                                    homeFragment.listView.invalidate();
+                                                }
+
+                                                @Override
+                                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                                }
+                                            });
                                             ProductAdapter productAdapter=new ProductAdapter(MainActivity.this,R.layout.item_row,productList);
                                             spProductType.setAdapter(productAdapter);
+                                            spProductType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                @Override
+                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                    HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                                                    homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+                                                    homeFragment.listView.invalidate();
+                                                }
 
+                                                @Override
+                                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                                }
+                                            });
                                             AdvertAdapter advertAdapter=new AdvertAdapter(MainActivity.this,R.layout.item_row,advertTypeList);
                                             spAdvertType.setAdapter(advertAdapter);
+                                            spAdvertType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                @Override
+                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                    HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                                                    homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+                                                    homeFragment.listView.invalidate();
+                                                }
+
+                                                @Override
+                                                public void onNothingSelected(AdapterView<?> parent) {
+
+                                                }
+                                            });
                                         }
                                     }
                                 });
@@ -202,7 +244,7 @@ public class MainActivity extends ActionBarActivity {
         clearFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "clear", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "clear", Toast.LENGTH_SHORT).show();
                 spProductType.setSelection(0);
                 spcityType.setSelection(0);
                 spAdvertType.setSelection(0);
@@ -403,7 +445,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(MainActivity.this, "called", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "called", Toast.LENGTH_SHORT).show();
 
 
 
@@ -413,7 +455,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public boolean onQueryTextChange(String searchQuery) {
 
-
+                searchingValue=searchQuery;
                 HomeFragment homeFragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
                 homeFragment.parseAdapter.filter(searchQuery,productList.get(spProductType.getSelectedItemPosition()).ProductName,cityTypeList.get(spcityType.getSelectedItemPosition()).cityName,advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
                 homeFragment.listView.invalidate();
@@ -442,7 +484,7 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_search) {
-            Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
             return true;
         }
         if (id == R.id.action_filter) {
