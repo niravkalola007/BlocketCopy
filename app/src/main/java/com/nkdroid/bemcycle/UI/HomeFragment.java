@@ -74,59 +74,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ProgressDialog progressDialog=new ProgressDialog(getActivity());
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        setHasOptionsMenu(true);
-        sharedPreferenceProductTypes=new SharedPreferenceProductTypes();
-        sharedPreferenceAdvertType=new SharedPreferenceAdvertType();
-        sharedPreferenceCityType=new SharedPreferenceCityType();
-        sharedPreferenceProductTypes.clearProductTypes(getActivity());
-        sharedPreferenceAdvertType.clearAdvertType(getActivity());
-        sharedPreferenceCityType.clearCitytype(getActivity());
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("product_category");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> scoreList, ParseException e) {
-                if (e == null) {
-
-                    for(int i=0;i<scoreList.size();i++){
-
-                        sharedPreferenceProductTypes.saveProductTypes(getActivity(),new ProductType(scoreList.get(i).getString("ProductCode"), scoreList.get(i).getString("ProductName")));
-                    }
-
-                    ParseQuery<ParseObject> query1 = ParseQuery.getQuery("advert_type_category");
-                    query1.findInBackground(new FindCallback<ParseObject>() {
-                        public void done(List<ParseObject> scoreList, ParseException e) {
-                            if (e == null) {
-
-                                for(int i=0;i<scoreList.size();i++){
-
-                                    sharedPreferenceAdvertType.saveAdvertType(getActivity(),new AdvertType(scoreList.get(i).getString("AdvertCode"), scoreList.get(i).getString("AdvertName")));
-                                }
-
-                                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("city_category");
-                                query2.findInBackground(new FindCallback<ParseObject>() {
-                                    public void done(List<ParseObject> scoreList, ParseException e) {
-                                        if (e == null) {
-
-                                            for(int i=0;i<scoreList.size();i++){
-
-                                                sharedPreferenceCityType.saveCityType(getActivity(),new CityType(scoreList.get(i).getString("CityCode"), scoreList.get(i).getString("CityName")));
-                                            }
-
-                                            progressDialog.dismiss();
-                                        }
-                                    }
-                                });
-
-                            }
-                        }
-                    });
-                }
-            }
-        });
 
     }
 
@@ -320,16 +268,28 @@ public class HomeFragment extends Fragment {
         }
 
         // Filter Class
-        public void filter(String charText) {
+        public void filter(String charText,String categoryText,String cityText,String advertText) {
 
             charText = charText.toLowerCase(Locale.getDefault());
+            categoryText=categoryText.toLowerCase(Locale.getDefault());
+            advertText=advertText.toLowerCase(Locale.getDefault());
+            cityText=cityText.toLowerCase(Locale.getDefault());
             sampleData.clear();
-            if (charText.length() == 0) {
+            if (charText.length() == 0 && categoryText.equalsIgnoreCase("Select Product Type") && advertText.equalsIgnoreCase("Select Advert Type") && cityText.equalsIgnoreCase("Select City")) {
                 sampleData.addAll(arraylist);
 
             } else {
                 for (ParseObject st : arraylist) {
-                    if (st.getString("AdsTitel").toLowerCase(Locale.getDefault()).contains(charText)) {
+                    if (charText.length() != 0 && st.getString("AdsTitel").toLowerCase(Locale.getDefault()).contains(charText)) {
+                        sampleData.add(st);
+                    }
+                    if(st.getString("City").toLowerCase(Locale.getDefault()).contains(cityText)){
+                        sampleData.add(st);
+                    }
+                    if(st.getString("Advert").toLowerCase(Locale.getDefault()).contains(advertText)){
+                        sampleData.add(st);
+                    }
+                    if(st.getString("Category").toLowerCase(Locale.getDefault()).contains(categoryText)){
                         sampleData.add(st);
                     }
                 }

@@ -1,6 +1,7 @@
 package com.nkdroid.bemcycle.UI;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -108,27 +109,80 @@ public class MainActivity extends ActionBarActivity {
             ft.replace(R.id.main_container, categoryFragment, "HomeFragment").commit();
         }
 
-        sharedPreferenceProductTypes=new SharedPreferenceProductTypes();
-        sharedPreferenceAdvertType=new SharedPreferenceAdvertType();
-        sharedPreferenceCityType=new SharedPreferenceCityType();
+
 
         advertTypeList=new ArrayList<>();
         cityTypeList=new ArrayList<>();
         productList=new ArrayList<>();
 
-        cityTypeList.addAll(sharedPreferenceCityType.loadCityType(MainActivity.this));
-        cityTypeList.add(0,new CityType("","Select City"));
-        advertTypeList.addAll(sharedPreferenceAdvertType.loadAdvertType(MainActivity.this));
-        advertTypeList.add(0,new AdvertType("","Select Advert Type"));
-        productList.addAll(sharedPreferenceProductTypes.loadProductTypes(MainActivity.this));
-        productList.add(0,new ProductType("","Select Product Type"));
-        CityAdapter cityAdapter=new CityAdapter(MainActivity.this,R.layout.item_row,cityTypeList);
-        spcityType.setAdapter(cityAdapter);
-        ProductAdapter productAdapter=new ProductAdapter(MainActivity.this,R.layout.item_row,productList);
-        spProductType.setAdapter(productAdapter);
+        final ProgressDialog progressDialog=new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
-        AdvertAdapter advertAdapter=new AdvertAdapter(MainActivity.this,R.layout.item_row,advertTypeList);
-        spAdvertType.setAdapter(advertAdapter);
+        sharedPreferenceProductTypes=new SharedPreferenceProductTypes();
+        sharedPreferenceAdvertType=new SharedPreferenceAdvertType();
+        sharedPreferenceCityType=new SharedPreferenceCityType();
+        sharedPreferenceProductTypes.clearProductTypes(MainActivity.this);
+        sharedPreferenceAdvertType.clearAdvertType(MainActivity.this);
+        sharedPreferenceCityType.clearCitytype(MainActivity.this);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("product_category");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> scoreList, ParseException e) {
+                if (e == null) {
+
+                    for(int i=0;i<scoreList.size();i++){
+
+                        sharedPreferenceProductTypes.saveProductTypes(MainActivity.this,new ProductType(scoreList.get(i).getString("ProductCode"), scoreList.get(i).getString("ProductName")));
+                    }
+
+                    ParseQuery<ParseObject> query1 = ParseQuery.getQuery("advert_type_category");
+                    query1.findInBackground(new FindCallback<ParseObject>() {
+                        public void done(List<ParseObject> scoreList, ParseException e) {
+                            if (e == null) {
+
+                                for(int i=0;i<scoreList.size();i++){
+
+                                    sharedPreferenceAdvertType.saveAdvertType(MainActivity.this,new AdvertType(scoreList.get(i).getString("AdvertCode"), scoreList.get(i).getString("AdvertName")));
+                                }
+
+                                ParseQuery<ParseObject> query2 = ParseQuery.getQuery("city_category");
+                                query2.findInBackground(new FindCallback<ParseObject>() {
+                                    public void done(List<ParseObject> scoreList, ParseException e) {
+                                        if (e == null) {
+
+                                            for(int i=0;i<scoreList.size();i++){
+
+                                                sharedPreferenceCityType.saveCityType(MainActivity.this,new CityType(scoreList.get(i).getString("CityCode"), scoreList.get(i).getString("CityName")));
+                                            }
+
+                                            progressDialog.dismiss();
+                                            cityTypeList.addAll(sharedPreferenceCityType.loadCityType(MainActivity.this));
+                                            cityTypeList.add(0,new CityType("","Select City"));
+                                            advertTypeList.addAll(sharedPreferenceAdvertType.loadAdvertType(MainActivity.this));
+                                            advertTypeList.add(0,new AdvertType("","Select Advert Type"));
+                                            productList.addAll(sharedPreferenceProductTypes.loadProductTypes(MainActivity.this));
+                                            productList.add(0,new ProductType("","Select Product Type"));
+                                            CityAdapter cityAdapter=new CityAdapter(MainActivity.this,R.layout.item_row,cityTypeList);
+                                            spcityType.setAdapter(cityAdapter);
+                                            ProductAdapter productAdapter=new ProductAdapter(MainActivity.this,R.layout.item_row,productList);
+                                            spProductType.setAdapter(productAdapter);
+
+                                            AdvertAdapter advertAdapter=new AdvertAdapter(MainActivity.this,R.layout.item_row,advertTypeList);
+                                            spAdvertType.setAdapter(advertAdapter);
+                                        }
+                                    }
+                                });
+
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+
 
     }
 
@@ -141,17 +195,21 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void nitView() {
+        spProductType= (Spinner) findViewById(R.id.spProductType);
+        spcityType= (Spinner) findViewById(R.id.spcityType);
+        spAdvertType= (Spinner) findViewById(R.id.spAdvertType);
         clearFilter= (TextView) findViewById(R.id.clearFilter);
         clearFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "clear", Toast.LENGTH_SHORT).show();
+                spProductType.setSelection(0);
+                spcityType.setSelection(0);
+                spAdvertType.setSelection(0);
             }
         });
 
-        spProductType= (Spinner) findViewById(R.id.spProductType);
-        spcityType= (Spinner) findViewById(R.id.spcityType);
-        spAdvertType= (Spinner) findViewById(R.id.spAdvertType);
+
         //  btnLogout = (ButtonRectangle)findViewById(R.id.btnLogout);
         leftDrawerList = (ListView) findViewById(R.id.left_drawer);
         rightDrawerList = (LinearLayout) findViewById(R.id.right_drawer);
@@ -341,7 +399,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        //*** setOnQueryTextListener ***
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
@@ -354,11 +411,14 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String searchQuery) {
+
+
                 HomeFragment homeFragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
-                homeFragment.parseAdapter.filter(newText);
+                homeFragment.parseAdapter.filter(searchQuery,productList.get(spProductType.getSelectedItemPosition()).ProductName,cityTypeList.get(spcityType.getSelectedItemPosition()).cityName,advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
                 homeFragment.listView.invalidate();
-                return false;
+
+                return true;
             }
         });
 
@@ -375,7 +435,7 @@ public class MainActivity extends ActionBarActivity {
                 return true;  // Return true to expand action view
             }
         });
-        return false;
+        return true;
     }
 
     @Override
