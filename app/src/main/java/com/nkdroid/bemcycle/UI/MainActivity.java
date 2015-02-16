@@ -81,14 +81,18 @@ public class MainActivity extends ActionBarActivity {
     private String[] leftSliderData = {"Adverts", "Submit Advert", "Customer service" };
     private  List<ParseObject> mDataset;
     private  List<ParseObject> mDatasetFiltered;
-    private String searchingValue="";
+    public static String searchingValue="";
+
+    public static String categoryValue="Select Product Type";
+    public static String cityValue="Select City";
+    public static String advertValue="Select Advert Type";
     private int selectedCategory,selectedCity,selectedAdvert;
 
     private int[] imagelist = {R.drawable.ic_action_search,
             R.drawable.ic_submit_advert,
             R.drawable.ic_communication_email,
 
-  };
+    };
 
 
 
@@ -178,6 +182,9 @@ public class MainActivity extends ActionBarActivity {
                                                 @Override
                                                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
+                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
+                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
 //                                                    Toast.makeText(MainActivity.this, searchingValue+"", Toast.LENGTH_SHORT).show();
                                                     try {
                                                         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
@@ -204,6 +211,9 @@ public class MainActivity extends ActionBarActivity {
                                             spProductType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                                 @Override
                                                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
+                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
+                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
                                                     try {
                                                         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
                                                         homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
@@ -238,6 +248,9 @@ public class MainActivity extends ActionBarActivity {
                                             spAdvertType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                                 @Override
                                                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
+                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
+                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
                                                     try {
                                                         HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
                                                         homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
@@ -682,4 +695,7 @@ public class MainActivity extends ActionBarActivity {
         spProductType.setSelection(selectedCategory);
 
     }
+
+
+
 }

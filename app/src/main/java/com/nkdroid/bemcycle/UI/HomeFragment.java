@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,10 +54,12 @@ import java.util.Locale;
 
 
 public class HomeFragment extends Fragment {
-//    RecyclerView recyclerView;
+    //    RecyclerView recyclerView;
     ListView  listView;
-   public ProductAdapter parseAdapter;
-//    RecyclerView.Adapter adapter;
+    public ProductAdapter parseAdapter;
+    public List<ParseObject> sampleData;
+    ArrayList<ParseObject> arraylist;
+    //    RecyclerView.Adapter adapter;
     private SharedPreferenceProductTypes sharedPreferenceProductTypes;
     private SharedPreferenceAdvertType sharedPreferenceAdvertType;
     private SharedPreferenceCityType sharedPreferenceCityType;
@@ -104,9 +107,13 @@ public class HomeFragment extends Fragment {
                         if (e == null) {
                             swipeView.setRefreshing(false);
 
+
                             parseAdapter=new ProductAdapter(getActivity(),scoreList);
-//                            RecyclerView.Adapter adapter = new MyCustomAdapter(getActivity(), scoreList);
                             listView.setAdapter(parseAdapter);
+
+                            parseAdapter.filter(MainActivity.searchingValue,MainActivity.categoryValue,MainActivity.cityValue,MainActivity.advertValue);
+                            parseAdapter.notifyDataSetChanged();
+
 
                         } else {
 
@@ -166,6 +173,8 @@ public class HomeFragment extends Fragment {
                     parseAdapter=new ProductAdapter(getActivity(),scoreList);
                     listView.setAdapter(parseAdapter);
 
+
+
                 } else {
 
                 }
@@ -177,16 +186,15 @@ public class HomeFragment extends Fragment {
     public class ProductAdapter extends BaseAdapter {
 
         Context context;
-        List<ParseObject> sampleData;
-        ArrayList<ParseObject> arraylist;
+
         LayoutInflater inflater;
 
 
-        public ProductAdapter(Context context, List<ParseObject> sampleData) {
+        public ProductAdapter(Context context, List<ParseObject> sampleDataValue) {
             this.context = context;
-            this.sampleData = sampleData;
-            this.arraylist = new ArrayList<ParseObject>();
-            this.arraylist.addAll(sampleData);
+            sampleData = sampleDataValue;
+            arraylist = new ArrayList<ParseObject>();
+            arraylist.addAll(sampleData);
 
         }
 
@@ -283,14 +291,16 @@ public class HomeFragment extends Fragment {
                     if (charText.length() != 0 && st.getString("AdsTitel").toLowerCase(Locale.getDefault()).contains(charText)) {
                         sampleData.add(st);
                     }
-                    if(st.getString("City").toLowerCase(Locale.getDefault()).contains(cityText)){
+                    else if(st.getString("City").toLowerCase(Locale.getDefault()).contains(cityText)){
                         sampleData.add(st);
                     }
-                    if(st.getString("Advert").toLowerCase(Locale.getDefault()).contains(advertText)){
+                    else if(st.getString("Advert").toLowerCase(Locale.getDefault()).contains(advertText)){
                         sampleData.add(st);
                     }
-                    if(st.getString("Category").toLowerCase(Locale.getDefault()).contains(categoryText)){
+                    else  if(st.getString("Category").toLowerCase(Locale.getDefault()).contains(categoryText)){
                         sampleData.add(st);
+                    } else {
+
                     }
                 }
             }
