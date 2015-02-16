@@ -22,16 +22,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHolder> {
 
     private static List<ParseObject> mDataset;
+    private static List<ParseObject> mDatasetFiltered;
     private static Context sContext;
-    private String filePath;
-    // Adapter's Constructor
+
     public MyCustomAdapter(Context context, List<ParseObject> myDataset) {
         mDataset = myDataset;
         sContext = context;
+        this.mDatasetFiltered = new ArrayList<ParseObject>();
+        this.mDatasetFiltered.addAll(mDataset);
+
     }
 
     // Create new views. This is invoked by the layout manager.
@@ -72,6 +76,9 @@ public class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHo
 
 
     }
+
+
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
@@ -136,5 +143,28 @@ public class MyCustomAdapter extends RecyclerView.Adapter<MyCustomAdapter.ViewHo
             intent.putExtra("image_path",mDataset.get(getPosition()).getParseFile("ThumbnailImage").getUrl()+"");
             sContext.startActivity(intent);
         }
+
+
+    }
+
+
+    public  void myFilterData(String charText) {
+
+
+//        receivedString = charText;
+
+        charText = charText.toLowerCase(Locale.getDefault());
+        mDataset.clear();
+        if (charText.length() == 0) {
+            mDataset.addAll(mDatasetFiltered);
+
+        } else {
+            for (ParseObject st : mDatasetFiltered) {
+                if (st.getString("Name").toLowerCase(Locale.getDefault()).contains(charText)) {
+                    mDataset.add(st);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 }

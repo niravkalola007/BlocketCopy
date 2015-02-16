@@ -44,22 +44,94 @@
 
         </FrameLayout>
 
-        <ListView
-                android:layout_gravity="bottom|end"
-                android:id="@+id/right_drawer"
-                android:layout_width="@dimen/navigation_drawer_width"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:background="@color/white"
 
-                android:dividerHeight="1dp"
+        <LinearLayout
+            android:clickable="true"
+            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_gravity="right|end"
+            android:id="@+id/right_drawer"
+            android:layout_width="@dimen/navigation_drawer_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:background="@color/white">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:textColor="#494949"
+                android:textSize="18sp"
+                android:text="Product Category"
+                android:layout_height="wrap_content" />
+
+
+            <Spinner
+                android:layout_marginTop="4dp"
+                android:spinnerMode="dialog"
+                android:id="@+id/spProductType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 />
+
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:textColor="#494949"
+                android:textSize="18sp"
+                android:text="City"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:layout_marginTop="4dp"
+                android:spinnerMode="dialog"
+                android:id="@+id/spcityType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+            <TextView
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:textColor="#494949"
+                android:textSize="18sp"
+                android:text="Advert Type"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:layout_marginTop="4dp"
+                android:spinnerMode="dialog"
+                android:id="@+id/spAdvertType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:id="@+id/clearFilter"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:text="CLEAR SELECTION"
+                android:textColor="#fff"
+                android:padding="10dp"
+                android:textSize="18sp"
+                android:background="@color/primaryColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            </LinearLayout>
+        <!--<ListView-->
+                <!--android:layout_gravity="right|end"-->
+                <!--android:id="@+id/right_drawer"-->
+                <!--android:layout_width="@dimen/navigation_drawer_width"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:background="@color/white"-->
+
+                <!--android:dividerHeight="1dp"-->
+                <!--/>-->
         </android.support.v4.widget.DrawerLayout>
 
         <ListView
             android:layout_gravity="left|start"
             android:id="@+id/left_drawer"
             android:layout_width="@dimen/navigation_drawer_width"
+
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:background="@color/white"

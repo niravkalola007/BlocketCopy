@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +12,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -25,22 +27,34 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.nkdroid.bemcycle.custom.SharedPreferenceAdvertType;
+import com.nkdroid.bemcycle.custom.SharedPreferenceCityType;
+import com.nkdroid.bemcycle.custom.SharedPreferenceProductTypes;
+import com.nkdroid.bemcycle.model.AdvertType;
+import com.nkdroid.bemcycle.model.CityType;
+import com.nkdroid.bemcycle.model.ProductType;
 import com.nkdroid.bemcycle.util.AppUtils;
 import com.nkdroid.bemcycle.R;
 import com.parse.FindCallback;
 import com.parse.ParseAnalytics;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.RefreshCallback;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -52,9 +66,19 @@ public class MainActivity extends ActionBarActivity {
     private ListView leftDrawerList;
     private DrawerLayout drawerLayoutRight;
     private ActionBarDrawerToggle drawerToggleRight;
-    private ListView rightDrawerList;
+    private LinearLayout rightDrawerList;
+    private Spinner spProductType,spcityType,spAdvertType;
+    private TextView clearFilter;
+    private SharedPreferenceProductTypes sharedPreferenceProductTypes;
+    private SharedPreferenceAdvertType sharedPreferenceAdvertType;
+    private SharedPreferenceCityType sharedPreferenceCityType;
+    private ArrayList<AdvertType> advertTypeList;
+    private ArrayList<CityType> cityTypeList;
+    private ArrayList<ProductType> productList;
     private ArrayAdapter<String> navigationDrawerAdapter;
     private String[] leftSliderData = {"Adverts", "Submit Advert", "Customer service" };
+    private  List<ParseObject> mDataset;
+    private  List<ParseObject> mDatasetFiltered;
 
     private int[] imagelist = {R.drawable.ic_action_search,
             R.drawable.ic_submit_advert,
@@ -84,6 +108,28 @@ public class MainActivity extends ActionBarActivity {
             ft.replace(R.id.main_container, categoryFragment, "HomeFragment").commit();
         }
 
+        sharedPreferenceProductTypes=new SharedPreferenceProductTypes();
+        sharedPreferenceAdvertType=new SharedPreferenceAdvertType();
+        sharedPreferenceCityType=new SharedPreferenceCityType();
+
+        advertTypeList=new ArrayList<>();
+        cityTypeList=new ArrayList<>();
+        productList=new ArrayList<>();
+
+        cityTypeList.addAll(sharedPreferenceCityType.loadCityType(MainActivity.this));
+        cityTypeList.add(0,new CityType("","Select City"));
+        advertTypeList.addAll(sharedPreferenceAdvertType.loadAdvertType(MainActivity.this));
+        advertTypeList.add(0,new AdvertType("","Select Advert Type"));
+        productList.addAll(sharedPreferenceProductTypes.loadProductTypes(MainActivity.this));
+        productList.add(0,new ProductType("","Select Product Type"));
+        CityAdapter cityAdapter=new CityAdapter(MainActivity.this,R.layout.item_row,cityTypeList);
+        spcityType.setAdapter(cityAdapter);
+        ProductAdapter productAdapter=new ProductAdapter(MainActivity.this,R.layout.item_row,productList);
+        spProductType.setAdapter(productAdapter);
+
+        AdvertAdapter advertAdapter=new AdvertAdapter(MainActivity.this,R.layout.item_row,advertTypeList);
+        spAdvertType.setAdapter(advertAdapter);
+
     }
 
     @Override
@@ -95,10 +141,20 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void nitView() {
+        clearFilter= (TextView) findViewById(R.id.clearFilter);
+        clearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "clear", Toast.LENGTH_SHORT).show();
+            }
+        });
 
+        spProductType= (Spinner) findViewById(R.id.spProductType);
+        spcityType= (Spinner) findViewById(R.id.spcityType);
+        spAdvertType= (Spinner) findViewById(R.id.spAdvertType);
         //  btnLogout = (ButtonRectangle)findViewById(R.id.btnLogout);
         leftDrawerList = (ListView) findViewById(R.id.left_drawer);
-        rightDrawerList = (ListView) findViewById(R.id.right_drawer);
+        rightDrawerList = (LinearLayout) findViewById(R.id.right_drawer);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        toolbar.setBackgroundColor(Color.parseColor("#494949"));
 
@@ -274,6 +330,38 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        //*** setOnQueryTextFocusChangeListener ***
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+
+
+            }
+        });
+
+        //*** setOnQueryTextListener ***
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(MainActivity.this, "called", Toast.LENGTH_SHORT).show();
+
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                HomeFragment homeFragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                homeFragment.parseAdapter.filter(newText);
+                homeFragment.listView.invalidate();
+                return false;
+            }
+        });
+
         MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
@@ -287,7 +375,7 @@ public class MainActivity extends ActionBarActivity {
                 return true;  // Return true to expand action view
             }
         });
-        return true;
+        return false;
     }
 
     @Override
@@ -319,6 +407,117 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    public class CityAdapter extends ArrayAdapter<CityType>{
 
+        Context context;
+        int layoutResourceId;
+        ArrayList<CityType> values;
+        // int android.R.Layout.
 
+        public CityAdapter(Context context, int resource, ArrayList<CityType> objects) {
+            super(context, resource, objects);
+            this.context = context;
+            this.values=objects;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+            TextView txt = new TextView(MainActivity.this);
+            txt.setPadding(16,16,16,16);
+            txt.setTextSize(18);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setText(values.get(position).cityName);
+            txt.setTextColor(Color.parseColor("#494949"));
+            return  txt;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            TextView txt = new TextView(MainActivity.this);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setPadding(16,16,16,16);
+            txt.setTextSize(18);
+            txt.setText(values.get(position).cityName);
+            txt.setTextColor(Color.parseColor("#494949"));
+            return  txt;
+        }
+    }
+
+    public class AdvertAdapter extends ArrayAdapter<AdvertType>{
+
+        Context context;
+        int layoutResourceId;
+        ArrayList<AdvertType> values;
+        // int android.R.Layout.
+
+        public AdvertAdapter(Context context, int resource, ArrayList<AdvertType> objects) {
+            super(context, resource, objects);
+            this.context = context;
+            this.values=objects;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+            TextView txt = new TextView(MainActivity.this);
+            txt.setPadding(16,16,16,16);
+            txt.setTextSize(18);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setText(values.get(position).AdvertName);
+            txt.setTextColor(Color.parseColor("#494949"));
+            return  txt;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            TextView txt = new TextView(MainActivity.this);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setPadding(16,16,16,16);
+            txt.setTextSize(18);
+            txt.setText(values.get(position).AdvertName);
+            txt.setTextColor(Color.parseColor("#494949"));
+            return  txt;
+        }
+    }
+
+    public class ProductAdapter extends ArrayAdapter<ProductType>{
+
+        Context context;
+        int layoutResourceId;
+        ArrayList<ProductType> values;
+        // int android.R.Layout.
+
+        public ProductAdapter(Context context, int resource, ArrayList<ProductType> objects) {
+            super(context, resource, objects);
+            this.context = context;
+            this.values=objects;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+
+            TextView txt = new TextView(MainActivity.this);
+            txt.setPadding(16,16,16,16);
+            txt.setTextSize(18);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setText(values.get(position).ProductName);
+            txt.setTextColor(Color.parseColor("#494949"));
+            return  txt;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            TextView txt = new TextView(MainActivity.this);
+            txt.setGravity(Gravity.CENTER_VERTICAL);
+            txt.setPadding(16,16,16,16);
+            txt.setTextSize(18);
+            txt.setText(values.get(position).ProductName);
+            txt.setTextColor(Color.parseColor("#494949"));
+            return  txt;
+        }
+    }
 }
