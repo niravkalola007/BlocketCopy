@@ -1,29 +1,25 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp"
-    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
-    android:background="#fff"
-    android:layout_alignParentTop="true"
+    android:layout_height="48dp"
+
     android:orientation="vertical">
 
-        <ImageView
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:id="@+id/imgIcon"/>
+    <ImageView
+        android:id="@+id/drawerIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp" />
 
-        <TextView
-            android:layout_centerVertical="true"
-            android:fontFamily="sans-serif-condensed"
-            android:id="@+id/txtTitle"
-            android:layout_marginLeft="72dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           />
+    <TextView
+        android:id="@+id/drawerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="72dp"
+        android:text=""
+        android:textColor="@android:color/black"
 
-</RelativeLayout>
-
+        android:textSize="16sp" />
+</FrameLayout>

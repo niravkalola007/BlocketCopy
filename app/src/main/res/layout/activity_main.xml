@@ -9,53 +9,63 @@
     <include layout="@layout/app_bar" />
 
     <android.support.v4.widget.DrawerLayout
+
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- activity view -->
-        <FrameLayout
-            android:id="@+id/main_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#fff">
+        <!--&lt;!&ndash; activity view &ndash;&gt;-->
+        <!--<FrameLayout-->
+            <!--android:id="@+id/main_container"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+           <!-->-->
 
-        </FrameLayout>
+        <!--</FrameLayout>-->
 
         <!-- navigation drawer left-->
 
 
-            <ListView
-                android:layout_gravity="left|start"
-                android:id="@+id/left_drawer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:background="#fff"
-
-                android:dividerHeight="1dp"
-                 />
 
 
 
         <!-- navigation drawer right-->
 
     <android.support.v4.widget.DrawerLayout
+
         android:id="@+id/drawerLayoutRight"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-            <ListView
+        <FrameLayout
+            android:id="@+id/main_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+        </FrameLayout>
+
+        <ListView
                 android:layout_gravity="bottom|end"
                 android:id="@+id/right_drawer"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/navigation_drawer_width"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
-                android:background="@color/blue"
+                android:background="@color/white"
 
                 android:dividerHeight="1dp"
                 />
         </android.support.v4.widget.DrawerLayout>
 
+        <ListView
+            android:layout_gravity="left|start"
+            android:id="@+id/left_drawer"
+            android:layout_width="@dimen/navigation_drawer_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+
+            android:dividerHeight="1dp"
+            />
 
     </android.support.v4.widget.DrawerLayout>
 

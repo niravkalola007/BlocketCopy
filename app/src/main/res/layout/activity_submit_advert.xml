@@ -1,0 +1,121 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <include layout="@layout/app_bar" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+<LinearLayout
+    android:padding="@dimen/activity_margin"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <EditText
+        android:textColor="#494949"
+        android:id="@+id/etName"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Name"
+        android:textSize="@dimen/normal_text"/>
+
+    <EditText
+        android:textColor="#494949"
+        android:id="@+id/etEmail"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Email"
+        android:textSize="@dimen/normal_text"/>
+
+    <EditText
+        android:textColor="#494949"
+        android:id="@+id/etMobile"
+        android:inputType="number"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Mobile"
+        android:textSize="@dimen/normal_text"/>
+
+    <EditText
+        android:textColor="#494949"
+        android:id="@+id/etAdvertTitle"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Advert title"
+        android:textSize="@dimen/normal_text"/>
+    <EditText
+        android:textColor="#494949"
+        android:id="@+id/etAdvertDescription"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Advert Description"
+        android:textSize="@dimen/normal_text"/>
+    <EditText
+        android:textColor="#494949"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="true"
+        android:id="@+id/etDate"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Date"
+        android:textSize="@dimen/normal_text"/>
+
+    <Spinner
+        android:layout_marginTop="4dp"
+        android:spinnerMode="dialog"
+        android:id="@+id/spAdvertType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Spinner
+        android:layout_marginTop="4dp"
+        android:spinnerMode="dialog"
+        android:id="@+id/spProductType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <Spinner
+        android:layout_marginTop="4dp"
+        android:spinnerMode="dialog"
+        android:id="@+id/spcityType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+
+    <ImageView
+        android:id="@+id/imageUpload"
+        android:layout_marginTop="4dp"
+        android:src="@drawable/upload"
+        android:padding="8dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
+
+    <TextView
+        android:id="@+id/txtSubmit"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center"
+        android:textColor="#fff"
+        android:gravity="center"
+        android:background="@color/primaryColor"
+        android:padding="16dp"
+        android:text="SUBMIT"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+    </ScrollView>
+</LinearLayout>

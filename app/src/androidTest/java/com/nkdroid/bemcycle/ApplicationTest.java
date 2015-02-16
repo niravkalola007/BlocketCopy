@@ -1,4 +1,4 @@
-package com.nkdroid.blocketcopy;
+package com.nkdroid.bemcycle;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

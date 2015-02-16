@@ -1,9 +1,9 @@
-package com.nkdroid.blocketcopy.UI;
+package com.nkdroid.bemcycle.UI;
 
-import android.app.SearchManager;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,12 +13,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -27,8 +29,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nkdroid.blocketcopy.util.AppUtils;
-import com.nkdroid.blocketcopy.R;
+import com.nkdroid.bemcycle.util.AppUtils;
+import com.nkdroid.bemcycle.R;
+import com.parse.FindCallback;
+import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.RefreshCallback;
+import com.parse.SaveCallback;
+
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -42,12 +54,12 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle drawerToggleRight;
     private ListView rightDrawerList;
     private ArrayAdapter<String> navigationDrawerAdapter;
-    private String[] leftSliderData = {"Home", "Home", "Home", "Home", };
+    private String[] leftSliderData = {"Adverts", "Submit Advert", "Customer service" };
 
-    private int[] imagelist = {R.mipmap.ic_launcher,
-            R.mipmap.ic_launcher,
-            R.mipmap.ic_launcher,
-            R.mipmap.ic_launcher,
+    private int[] imagelist = {R.drawable.ic_action_search,
+            R.drawable.ic_submit_advert,
+            R.drawable.ic_communication_email,
+
   };
 
 
@@ -58,19 +70,29 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         nitView();
 
+
         if (toolbar != null) {
-            toolbar.setTitle("Home");
+            toolbar.setTitle("BEM CYCLE");
             setSupportActionBar(toolbar);
         }
 
         initDrawer();
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
-        ft.replace(R.id.main_container, new HomeFragment());
-        ft.commit();
+        HomeFragment categoryFragment = HomeFragment.newInstance("", "");
+        if (manager.findFragmentByTag("HomeFragment") == null) {
+            ft.replace(R.id.main_container, categoryFragment, "HomeFragment").commit();
+        }
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Display the current values for this user, such as their age and gender.
+
+    }
 
     private void nitView() {
 
@@ -78,11 +100,13 @@ public class MainActivity extends ActionBarActivity {
         leftDrawerList = (ListView) findViewById(R.id.left_drawer);
         rightDrawerList = (ListView) findViewById(R.id.right_drawer);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setBackgroundColor(Color.parseColor("#494949"));
+//        toolbar.setBackgroundColor(Color.parseColor("#494949"));
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+
         drawerLayoutRight = (DrawerLayout) findViewById(R.id.drawerLayoutRight);
         navigationDrawerAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_activated_1, android.R.id.text1, leftSliderData);
-        leftDrawerList.setAdapter(new lViewadapter());
+        leftDrawerList.setAdapter(new DrawerAdapter(MainActivity.this,leftSliderData));
 
         Toolbar.LayoutParams layoutParams = new Toolbar.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -94,73 +118,35 @@ public class MainActivity extends ActionBarActivity {
         layoutParams.rightMargin = 16;
 
 
-
-      /*  btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                SharedPreferences preferences = getSharedPreferences("login", MODE_PRIVATE);
-                preferences.edit().remove("isUserLogin").commit();
-                Intent i = new Intent(MyDrawerActivity.this, LoginActivity.class);
-                startActivity(i);
-                finish();
-            }
-        });*/
-
         leftDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 drawerLayout.closeDrawers();
-                FragmentManager fm = getSupportFragmentManager();
+
                 switch (position) {
 
                     case 0:
+                        FragmentManager manager = getSupportFragmentManager();
+                        FragmentTransaction ft = manager.beginTransaction();
+                        HomeFragment categoryFragment = HomeFragment.newInstance("", "");
+                        if (manager.findFragmentByTag("HomeFragment") == null) {
+                            ft.replace(R.id.main_container, categoryFragment, "HomeFragment").commit();
+                        }
 
-//                        FragmentManager manager = getSupportFragmentManager();
-//                        FragmentTransaction ft = manager.beginTransaction();
-//                        ft.replace(R.id.main_container, new MyAccountFragment(), "MA");
-//                        // ft.addToBackStack("");
-//                        ft.commit();
-//
-//                        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
-//                            fm.popBackStack();
-//                        }
+
 
                         break;
                     case 1:
-
-//                        FragmentManager manager1 = getSupportFragmentManager();
-//                        FragmentTransaction ft1 = manager1.beginTransaction();
-//                        ft1.replace(R.id.main_container, new Profile());
-//                        // ft1.addToBackStack("");
-//                        ft1.commit();
-//                        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
-//                            fm.popBackStack();
-//                        }
+//                        Toast.makeText(MainActivity.this,"click",Toast.LENGTH_LONG).show();
+                        Intent intent=new Intent(MainActivity.this,SubmitAdvertActivity.class);
+                        startActivity(intent);
                         break;
                     case 2:
 
-//                        FragmentManager manager22 = getSupportFragmentManager();
-//                        FragmentTransaction ft22 = manager22.beginTransaction();
-//                        ft22.replace(R.id.main_container, new MyRecipient_home());
-//                        // ft22.addToBackStack("");
-//                        ft22.commit();
-//                        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
-//                            fm.popBackStack();
-//                        }
-
+                        Intent intentService=new Intent(MainActivity.this,CustomerServiceActivity.class);
+                        startActivity(intentService);
                         break;
-                    case 3:
 
-//                        FragmentManager manager2 = getSupportFragmentManager();
-//                        FragmentTransaction ft2 = manager2.beginTransaction();
-//                        ft2.replace(R.id.main_container, new Aboutus());
-//                        // ft2.addToBackStack("");
-//                        ft2.commit();
-//                        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
-//                            fm.popBackStack();
-//                        }
-                        break;
 
                 }
 
@@ -168,53 +154,56 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    public class lViewadapter extends BaseAdapter {
-        @Override
+    public class DrawerAdapter extends BaseAdapter {
+
+        Context context;
+        String[] drawerTitleList;
+
+        public DrawerAdapter(Context context, String[] drawerTitleList) {
+            this.context = context;
+            this.drawerTitleList = drawerTitleList;
+
+        }
+
         public int getCount() {
-            return leftSliderData.length;
+
+            return drawerTitleList.length;
         }
 
-        @Override
         public Object getItem(int position) {
-            return null;
+            return drawerTitleList[position];
         }
 
-        @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = getLayoutInflater();
-            View row;
-            row = inflater.inflate(R.layout.mydrawer_listview_layout, parent, false);
-            TextView title = (TextView) row.findViewById(R.id.txtTitle);
-            ImageView img_icon = (ImageView) row.findViewById(R.id.imgIcon);
-            img_icon.setBackgroundResource(imagelist[position]);
-            img_icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            title.setText(leftSliderData[position]);
-            title.setTextSize(20);
-            return row;
+        public class ViewHolder {
+            ImageView drawerIcon;
+            TextView drawerText;
+        }
+
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final ViewHolder holder;
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.mydrawer_listview_layout, parent,false);
+                holder = new ViewHolder();
+                holder.drawerIcon=(ImageView)convertView.findViewById(R.id.drawerIcon);
+                holder.drawerText=(TextView)convertView.findViewById(R.id.drawerText);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.drawerIcon.setImageResource(imagelist[position]);
+            holder.drawerText.setText(leftSliderData[position]);
+            return convertView;
         }
     }
 
-    public void setToolColor(int color) {
-        toolbar.setBackgroundColor(color);
-    }
 
-    public void setToolTitle(String title) {
-        toolbar.setTitle(title);
-    }
-
-    public void setToolSubTitle(String subTitle) {
-
-        toolbar.setSubtitle(subTitle);
-    }
-
-    public Toolbar getToolBar() {
-        return this.toolbar;
-    }
 
 
     private void initDrawer() {
@@ -233,29 +222,12 @@ public class MainActivity extends ActionBarActivity {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
 
-//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
-//                    drawerLayout.closeDrawer(rightDrawerList);
-//                }
-//                if(drawerLayout.isDrawerOpen(rightDrawerList)){
-//                    drawerLayout.closeDrawer(leftDrawerList);
-//                }
-
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
-//                    drawerLayoutRight.closeDrawer(rightDrawerList);
-//                }
 
-//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
-//                    drawerLayout.closeDrawer(rightDrawerList);
-//                }
-//
-//                if(drawerLayout.isDrawerOpen(rightDrawerList)){
-//                    drawerLayout.closeDrawer(leftDrawerList);
-//                }
             }
 
         };
@@ -268,13 +240,6 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
-//                if(drawerLayout.isDrawerOpen(leftDrawerList)){
-//                    drawerLayout.closeDrawer(rightDrawerList);
-//                }
-//                if(drawerLayout.isDrawerOpen(rightDrawerList)){
-//                    drawerLayout.closeDrawer(leftDrawerList);
-//                }
 
             }
 
@@ -352,4 +317,8 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
 }

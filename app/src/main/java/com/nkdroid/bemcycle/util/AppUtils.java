@@ -1,4 +1,4 @@
-package com.nkdroid.blocketcopy.util;
+package com.nkdroid.bemcycle.util;
 
 import android.content.Context;
 import android.content.res.Resources;
