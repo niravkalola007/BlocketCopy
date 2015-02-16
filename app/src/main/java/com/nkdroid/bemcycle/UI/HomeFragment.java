@@ -163,6 +163,7 @@ public class HomeFragment extends Fragment {
 
         // Create the adapter
         ParseQuery<ParseObject> query = ParseQuery.getQuery("general");
+
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> scoreList, ParseException e) {
                 if (e == null) {
