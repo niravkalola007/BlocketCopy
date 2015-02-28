@@ -41,14 +41,19 @@ import com.nkdroid.bemcycle.model.CityType;
 import com.nkdroid.bemcycle.model.ProductType;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.xml.sax.helpers.ParserAdapter;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -102,13 +107,30 @@ public class HomeFragment extends Fragment {
 
                 // Create the adapter
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("general");
+                query.orderByDescending("DateString");
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> scoreList, ParseException e) {
                         if (e == null) {
                             swipeView.setRefreshing(false);
 
+                            ArrayList<ParseObject> newList=new ArrayList<ParseObject>();
 
-                            parseAdapter=new ProductAdapter(getActivity(),scoreList);
+                            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd-MM-yyyy");
+                           final  Calendar cal = Calendar.getInstance();
+
+                            cal.add(Calendar.DATE, -7);
+                            for(int i=0;i<scoreList.size();i++){
+                                try {
+                                    if (simpleDateFormat.parse(scoreList.get(i).get("DateString").toString()).after(simpleDateFormat.parse(simpleDateFormat.format(cal.getTime())))) {
+                                        newList.add(scoreList.get(i));
+                                    }
+
+                                }catch (Exception ee){
+                                    ee.printStackTrace();
+                                }
+                            }
+
+                            parseAdapter=new ProductAdapter(getActivity(),newList);
                             listView.setAdapter(parseAdapter);
 
                             parseAdapter.filter(MainActivity.searchingValue,MainActivity.categoryValue,MainActivity.cityValue,MainActivity.advertValue);
@@ -163,15 +185,31 @@ public class HomeFragment extends Fragment {
 
         // Create the adapter
         ParseQuery<ParseObject> query = ParseQuery.getQuery("general");
-
+        query.orderByDescending("DateString");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> scoreList, ParseException e) {
                 if (e == null) {
                     progressDialog.dismiss();
 //                    scoreList.addAll(scoreList);
 //                    scoreList.addAll(scoreList);
-//                    adapter = new MyCustomAdapter(getActivity(), scoreList);
-                    parseAdapter=new ProductAdapter(getActivity(),scoreList);
+                ArrayList<ParseObject> newList=new ArrayList<ParseObject>();
+
+                    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd-MM-yyyy");
+                    final  Calendar cal = Calendar.getInstance();
+
+                    cal.add(Calendar.DATE, -7);
+                    for(int i=0;i<scoreList.size();i++){
+                        try {
+                            if (simpleDateFormat.parse(scoreList.get(i).get("DateString").toString()).after(simpleDateFormat.parse(simpleDateFormat.format(cal.getTime())))) {
+                                newList.add(scoreList.get(i));
+                            }
+
+                        }catch (Exception ee){
+                            ee.printStackTrace();
+                        }
+                    }
+
+                    parseAdapter=new ProductAdapter(getActivity(),newList);
                     listView.setAdapter(parseAdapter);
 
 
