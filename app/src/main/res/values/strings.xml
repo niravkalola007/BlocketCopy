@@ -14,5 +14,7 @@
     <string name="title_activity_customer_service">customerServiceActivity</string>
     <string name="title_activity_product_detail">ProductDetailActivity</string>
     <string name="title_activity_full_screen_image">FullScreenImageActivity</string>
+    <string name="title_activity_remove">RemoveActivity</string>
+    <string name="title_activity_map">MapActivity</string>
 
 </resources>

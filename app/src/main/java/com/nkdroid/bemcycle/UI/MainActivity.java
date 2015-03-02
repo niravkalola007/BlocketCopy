@@ -1,6 +1,7 @@
 package com.nkdroid.bemcycle.UI;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +56,7 @@ import com.parse.RefreshCallback;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -68,8 +70,9 @@ public class MainActivity extends ActionBarActivity {
     private ListView leftDrawerList;
     private DrawerLayout drawerLayoutRight;
     private ActionBarDrawerToggle drawerToggleRight;
+    LinearLayout leftDrawerLayout;
     private LinearLayout rightDrawerList;
-    private Spinner spProductType,spcityType,spAdvertType;
+    private TextView spProductType,spcityType,spAdvertType;
     private TextView clearFilter;
     private SharedPreferenceProductTypes sharedPreferenceProductTypes;
     private SharedPreferenceAdvertType sharedPreferenceAdvertType;
@@ -86,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
     public static String categoryValue="Select Product Type";
     public static String cityValue="Select City";
     public static String advertValue="Select Advert Type";
-    private int selectedCategory,selectedCity,selectedAdvert;
+    private String selectedCategory,selectedCity,selectedAdvert;
 
     private int[] imagelist = {R.drawable.ic_action_search,
             R.drawable.ic_submit_advert,
@@ -103,6 +106,9 @@ public class MainActivity extends ActionBarActivity {
         nitView();
 
 
+
+
+
         if (toolbar != null) {
             toolbar.setTitle("BEM CYCLE");
             setSupportActionBar(toolbar);
@@ -115,6 +121,7 @@ public class MainActivity extends ActionBarActivity {
         if (manager.findFragmentByTag("HomeFragment") == null) {
             ft.replace(R.id.main_container, categoryFragment, "HomeFragment").commit();
         }
+
 
 
 
@@ -141,7 +148,7 @@ public class MainActivity extends ActionBarActivity {
 
                     for(int i=0;i<scoreList.size();i++){
 
-                        sharedPreferenceProductTypes.saveProductTypes(MainActivity.this,new ProductType(scoreList.get(i).getString("ProductCode"), scoreList.get(i).getString("ProductName")));
+                        sharedPreferenceProductTypes.saveProductTypes(MainActivity.this,new ProductType((ArrayList<String>)scoreList.get(i).get("array"),scoreList.get(i).getString("ProductCode"), scoreList.get(i).getString("ProductName")));
                     }
 
                     ParseQuery<ParseObject> query1 = ParseQuery.getQuery("advert_type_category");
@@ -161,118 +168,287 @@ public class MainActivity extends ActionBarActivity {
 
                                             for(int i=0;i<scoreList.size();i++){
 
-                                                sharedPreferenceCityType.saveCityType(MainActivity.this,new CityType(scoreList.get(i).getString("CityCode"), scoreList.get(i).getString("CityName")));
+                                                sharedPreferenceCityType.saveCityType(MainActivity.this,new CityType((ArrayList<String>)scoreList.get(i).get("array"),scoreList.get(i).getString("CityCode"), scoreList.get(i).getString("CityName")));
                                             }
 
                                             progressDialog.dismiss();
                                             cityTypeList.addAll(sharedPreferenceCityType.loadCityType(MainActivity.this));
-                                            cityTypeList.add(0,new CityType("","Select City"));
+
                                             advertTypeList.addAll(sharedPreferenceAdvertType.loadAdvertType(MainActivity.this));
-                                            advertTypeList.add(0,new AdvertType("","Select Advert Type"));
+
                                             productList.addAll(sharedPreferenceProductTypes.loadProductTypes(MainActivity.this));
-                                            productList.add(0,new ProductType("","Select Product Type"));
 
-
-                                            CityAdapter cityAdapter=new CityAdapter(MainActivity.this,R.layout.item_row,cityTypeList);
-                                            spcityType.setAdapter(cityAdapter);
-
-
-
-                                            spcityType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                            spcityType.setOnClickListener(new View.OnClickListener() {
                                                 @Override
-                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
-                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
-                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
-//                                                    Toast.makeText(MainActivity.this, searchingValue+"", Toast.LENGTH_SHORT).show();
-                                                    try {
-                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
-                                                        homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
-                                                        homeFragment.listView.invalidate();
-                                                    }catch (NullPointerException e){
-                                                        e.printStackTrace();
-                                                    }
-                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
-                                                    SharedPreferences.Editor editor = preferences.edit();
-                                                    editor.putInt("city", spcityType.getSelectedItemPosition());
-                                                    editor.putInt("advert", spAdvertType.getSelectedItemPosition());
-                                                    editor.putInt("category",spProductType.getSelectedItemPosition());
-                                                    editor.commit();
-                                                }
-
-                                                @Override
-                                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                                }
-                                            });
-                                            ProductAdapter productAdapter=new ProductAdapter(MainActivity.this,R.layout.item_row,productList);
-                                            spProductType.setAdapter(productAdapter);
-                                            spProductType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                                @Override
-                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
-                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
-                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
-                                                    try {
-                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
-                                                        homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
-                                                        homeFragment.listView.invalidate();
-                                                    }catch (NullPointerException e){
-                                                        e.printStackTrace();
-                                                    }
-                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
-                                                    SharedPreferences.Editor editor = preferences.edit();
-                                                    editor.putInt("city", spcityType.getSelectedItemPosition());
-                                                    editor.putInt("advert", spAdvertType.getSelectedItemPosition());
-                                                    editor.putInt("category",spProductType.getSelectedItemPosition());
-                                                    editor.commit();
-                                                }
-
-                                                @Override
-                                                public void onNothingSelected(AdapterView<?> parent) {
-
-                                                }
-                                            });
-                                            AdvertAdapter advertAdapter=new AdvertAdapter(MainActivity.this,R.layout.item_row,advertTypeList);
-                                            spAdvertType.setAdapter(advertAdapter);
-
-                                            SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
-                                            selectedCategory=preferences.getInt("category",0);
-                                            selectedCity=preferences.getInt("city",0);
-                                            selectedAdvert=preferences.getInt("advert",0);
-                                            spAdvertType.setSelection(selectedAdvert);
-                                            spcityType.setSelection(selectedCity);
-                                            spProductType.setSelection(selectedCategory);
-
-                                            spAdvertType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                                @Override
-                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
-                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
-                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
-                                                    try {
-                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
-                                                        homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
-                                                        homeFragment.listView.invalidate();
-                                                    }catch (NullPointerException e){
-                                                        e.printStackTrace();
-                                                    }
-                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
-                                                    SharedPreferences.Editor editor = preferences.edit();
-                                                    editor.putInt("city", spcityType.getSelectedItemPosition());
-                                                    editor.putInt("advert", spAdvertType.getSelectedItemPosition());
-                                                    editor.putInt("category",spProductType.getSelectedItemPosition());
-                                                    editor.commit();
+                                                public void onClick(View v) {
+                                                    final Dialog alertDialog = new Dialog(MainActivity.this);
+                                                    LayoutInflater inflater = getLayoutInflater();
+                                                    View convertView = (View) inflater.inflate(R.layout.list, null);
+                                                    alertDialog.setContentView(convertView);
+                                                    alertDialog.setTitle("Select City");
+                                                    ListView lv = (ListView) convertView.findViewById(R.id.lv);
+                                                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                        @Override
+                                                        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
 
-                                                }
+//                    String names[] ={"A","B","C","D"};
+                                                            final Dialog innerAlertDialog = new Dialog(MainActivity.this);
+                                                            LayoutInflater inflater = getLayoutInflater();
+                                                            View convertView = (View) inflater.inflate(R.layout.list, null);
+                                                            innerAlertDialog.setContentView(convertView);
+                                                            innerAlertDialog.setTitle(cityTypeList.get(position).cityName);
+                                                            ListView lv = (ListView) convertView.findViewById(R.id.lv);
+                                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                                @Override
+                                                                public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                                                                    spcityType.setText(cityTypeList.get(position).subList.get(pos));
 
-                                                @Override
-                                                public void onNothingSelected(AdapterView<?> parent) {
+                                                                    categoryValue=spProductType.getText().toString().trim();
+                                                                    cityValue=spcityType.getText().toString().trim();
+                                                                    advertValue=spAdvertType.getText().toString().trim();
+//
+                                                                    try {
+                                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                                                                        homeFragment.parseAdapter.filter(searchingValue, spProductType.getText().toString().trim(), spcityType.getText().toString().trim(),spAdvertType.getText().toString().trim());
+                                                                        homeFragment.listView.invalidate();
+                                                                    }catch (NullPointerException e){
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+                                                                    SharedPreferences.Editor editor = preferences.edit();
+                                                                    editor.putString("city", spcityType.getText().toString().trim());
+                                                                    editor.putString("advert", spAdvertType.getText().toString().trim());
+                                                                    editor.putString("category",spProductType.getText().toString().trim());
+                                                                    editor.commit();
 
+
+
+
+
+                                                                    innerAlertDialog.dismiss();
+                                                                    alertDialog.dismiss();
+                                                                }
+                                                            });
+
+                                                            CitySubAdapter productSubAdapter = new CitySubAdapter(MainActivity.this, cityTypeList.get(position).subList);
+                                                            lv.setAdapter(productSubAdapter);
+                                                            innerAlertDialog.show();
+
+
+                                                        }
+                                                    });
+                                                    CityAdapter productSubAdapter = new CityAdapter(MainActivity.this, cityTypeList);
+                                                    lv.setAdapter(productSubAdapter);
+                                                    alertDialog.show();
                                                 }
                                             });
+
+                                            spAdvertType.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    final Dialog alertDialog = new Dialog(MainActivity.this);
+                                                    LayoutInflater inflater = getLayoutInflater();
+                                                    View convertView = (View) inflater.inflate(R.layout.list, null);
+                                                    alertDialog.setContentView(convertView);
+                                                    alertDialog.setTitle("Select Advert Type");
+                                                    ListView lv = (ListView) convertView.findViewById(R.id.lv);
+                                                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                        @Override
+                                                        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                                                            spAdvertType.setText(advertTypeList.get(position).AdvertName);
+                                                            categoryValue=spProductType.getText().toString().trim();
+                                                            cityValue=spcityType.getText().toString().trim();
+                                                            advertValue=spAdvertType.getText().toString().trim();
+//
+                                                            try {
+                                                                HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                                                                homeFragment.parseAdapter.filter(searchingValue, spProductType.getText().toString().trim(), spcityType.getText().toString().trim(),spAdvertType.getText().toString().trim());
+                                                                homeFragment.listView.invalidate();
+                                                            }catch (NullPointerException e){
+                                                                e.printStackTrace();
+                                                            }
+                                                            SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+                                                            SharedPreferences.Editor editor = preferences.edit();
+                                                            editor.putString("city", spcityType.getText().toString().trim());
+                                                            editor.putString("advert", spAdvertType.getText().toString().trim());
+                                                            editor.putString("category",spProductType.getText().toString().trim());
+                                                            editor.commit();
+                                                            alertDialog.dismiss();
+
+                                                        }
+                                                    });
+                                                    AdvertAdapter productSubAdapter = new AdvertAdapter(MainActivity.this, advertTypeList);
+                                                    lv.setAdapter(productSubAdapter);
+                                                    alertDialog.show();
+                                                }
+                                            });
+                                            spProductType.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    final Dialog alertDialog = new Dialog(MainActivity.this);
+                                                    LayoutInflater inflater = getLayoutInflater();
+                                                    View convertView = (View) inflater.inflate(R.layout.list, null);
+                                                    alertDialog.setContentView(convertView);
+                                                    alertDialog.setTitle("Select Product Type");
+                                                    ListView lv = (ListView) convertView.findViewById(R.id.lv);
+                                                    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                        @Override
+                                                        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+
+//                    String names[] ={"A","B","C","D"};
+                                                            final Dialog innerAlertDialog = new Dialog(MainActivity.this);
+                                                            LayoutInflater inflater = getLayoutInflater();
+                                                            View convertView = (View) inflater.inflate(R.layout.list, null);
+                                                            innerAlertDialog.setContentView(convertView);
+                                                            innerAlertDialog.setTitle(productList.get(position).ProductName);
+                                                            ListView lv = (ListView) convertView.findViewById(R.id.lv);
+                                                            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                                @Override
+                                                                public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                                                                    spProductType.setText(productList.get(position).subList.get(pos));
+
+                                                                    categoryValue=spProductType.getText().toString().trim();
+                                                                    cityValue=spcityType.getText().toString().trim();
+                                                                    advertValue=spAdvertType.getText().toString().trim();
+//
+                                                                    try {
+                                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                                                                        homeFragment.parseAdapter.filter(searchingValue, spProductType.getText().toString().trim(), spcityType.getText().toString().trim(),spAdvertType.getText().toString().trim());
+                                                                        homeFragment.listView.invalidate();
+                                                                    }catch (NullPointerException e){
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+                                                                    SharedPreferences.Editor editor = preferences.edit();
+                                                                    editor.putString("city", spcityType.getText().toString().trim());
+                                                                    editor.putString("advert", spAdvertType.getText().toString().trim());
+                                                                    editor.putString("category",spProductType.getText().toString().trim());
+                                                                    editor.commit();
+
+                                                                    innerAlertDialog.dismiss();
+                                                                    alertDialog.dismiss();
+                                                                }
+                                                            });
+
+                                                            ProductSubAdapter productSubAdapter = new ProductSubAdapter(MainActivity.this, productList.get(position).subList);
+                                                            lv.setAdapter(productSubAdapter);
+                                                            innerAlertDialog.show();
+
+                                                        }
+                                                    });
+                                                    ProductAdapter productSubAdapter = new ProductAdapter(MainActivity.this, productList);
+                                                    lv.setAdapter(productSubAdapter);
+                                                    alertDialog.show();
+                                                }
+                                            });
+
+//
+//
+//
+//
+//
+//                                            CityAdapter cityAdapter=new CityAdapter(MainActivity.this,R.layout.item_row,cityTypeList);
+//                                            spcityType.setAdapter(cityAdapter);
+//
+//
+//
+//                                            spcityType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                                @Override
+//                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//
+//                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
+//                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
+//                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
+////                                                    Toast.makeText(MainActivity.this, searchingValue+"", Toast.LENGTH_SHORT).show();
+//                                                    try {
+//                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+//                                                        homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+//                                                        homeFragment.listView.invalidate();
+//                                                    }catch (NullPointerException e){
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+//                                                    SharedPreferences.Editor editor = preferences.edit();
+//                                                    editor.putInt("city", spcityType.getSelectedItemPosition());
+//                                                    editor.putInt("advert", spAdvertType.getSelectedItemPosition());
+//                                                    editor.putInt("category",spProductType.getSelectedItemPosition());
+//                                                    editor.commit();
+//                                                }
+//
+//                                                @Override
+//                                                public void onNothingSelected(AdapterView<?> parent) {
+//
+//                                                }
+//                                            });
+//                                            ProductAdapter productAdapter=new ProductAdapter(MainActivity.this,R.layout.item_row,productList);
+//                                            spProductType.setAdapter(productAdapter);
+//                                            spProductType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                                @Override
+//                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
+//                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
+//                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
+//                                                    try {
+//                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+//                                                        homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+//                                                        homeFragment.listView.invalidate();
+//                                                    }catch (NullPointerException e){
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+//                                                    SharedPreferences.Editor editor = preferences.edit();
+//                                                    editor.putInt("city", spcityType.getSelectedItemPosition());
+//                                                    editor.putInt("advert", spAdvertType.getSelectedItemPosition());
+//                                                    editor.putInt("category",spProductType.getSelectedItemPosition());
+//                                                    editor.commit();
+//                                                }
+//
+//                                                @Override
+//                                                public void onNothingSelected(AdapterView<?> parent) {
+//
+//                                                }
+//                                            });
+//                                            AdvertAdapter advertAdapter=new AdvertAdapter(MainActivity.this,R.layout.item_row,advertTypeList);
+//                                            spAdvertType.setAdapter(advertAdapter);
+//
+//                                            SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+//                                            selectedCategory=preferences.getInt("category",0);
+//                                            selectedCity=preferences.getInt("city",0);
+//                                            selectedAdvert=preferences.getInt("advert",0);
+//                                            spAdvertType.setSelection(selectedAdvert);
+//                                            spcityType.setSelection(selectedCity);
+//                                            spProductType.setSelection(selectedCategory);
+//
+//                                            spAdvertType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                                @Override
+//                                                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                                                    categoryValue=productList.get(spProductType.getSelectedItemPosition()).ProductName;
+//                                                    cityValue=cityTypeList.get(spcityType.getSelectedItemPosition()).cityName;
+//                                                    advertValue=advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName;
+//                                                    try {
+//                                                        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+//                                                        homeFragment.parseAdapter.filter(searchingValue, productList.get(spProductType.getSelectedItemPosition()).ProductName, cityTypeList.get(spcityType.getSelectedItemPosition()).cityName, advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+//                                                        homeFragment.listView.invalidate();
+//                                                    }catch (NullPointerException e){
+//                                                        e.printStackTrace();
+//                                                    }
+//                                                    SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+//                                                    SharedPreferences.Editor editor = preferences.edit();
+//                                                    editor.putInt("city", spcityType.getSelectedItemPosition());
+//                                                    editor.putInt("advert", spAdvertType.getSelectedItemPosition());
+//                                                    editor.putInt("category",spProductType.getSelectedItemPosition());
+//                                                    editor.commit();
+//
+//
+//                                                }
+//
+//                                                @Override
+//                                                public void onNothingSelected(AdapterView<?> parent) {
+//
+//                                                }
+//                                            });
                                         }
                                     }
                                 });
@@ -297,23 +473,42 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void nitView() {
-        spProductType= (Spinner) findViewById(R.id.spProductType);
-        spcityType= (Spinner) findViewById(R.id.spcityType);
-        spAdvertType= (Spinner) findViewById(R.id.spAdvertType);
+        spProductType= (TextView) findViewById(R.id.spProductType);
+        spcityType= (TextView) findViewById(R.id.spcityType);
+        spAdvertType= (TextView) findViewById(R.id.spAdvertType);
         clearFilter= (TextView) findViewById(R.id.clearFilter);
         clearFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "clear", Toast.LENGTH_SHORT).show();
-                spProductType.setSelection(0);
-                spcityType.setSelection(0);
-                spAdvertType.setSelection(0);
+
+                spProductType.setText("Select Product Type");
+                spcityType.setText("Select City");
+                spAdvertType.setText("Select Advert Type");
+
+                SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString("city", spcityType.getText().toString().trim());
+                editor.putString("advert", spAdvertType.getText().toString().trim());
+                editor.putString("category",spProductType.getText().toString().trim());
+                editor.commit();
+
+
+
+
+                try {
+                    HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+                    homeFragment.parseAdapter.filter(searchingValue, spProductType.getText().toString().trim(),spcityType.getText().toString().trim(), spAdvertType.getText().toString().trim());
+                    homeFragment.listView.invalidate();
+                }catch (NullPointerException e){
+                    e.printStackTrace();
+                }
             }
         });
 
 
         //  btnLogout = (ButtonRectangle)findViewById(R.id.btnLogout);
         leftDrawerList = (ListView) findViewById(R.id.left_drawer);
+        leftDrawerLayout= (LinearLayout) findViewById(R.id.leftDrawerLayout);
         rightDrawerList = (LinearLayout) findViewById(R.id.right_drawer);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        toolbar.setBackgroundColor(Color.parseColor("#494949"));
@@ -517,7 +712,7 @@ public class MainActivity extends ActionBarActivity {
 
                 searchingValue=searchQuery;
                 HomeFragment homeFragment= (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
-                homeFragment.parseAdapter.filter(searchQuery,productList.get(spProductType.getSelectedItemPosition()).ProductName,cityTypeList.get(spcityType.getSelectedItemPosition()).cityName,advertTypeList.get(spAdvertType.getSelectedItemPosition()).AdvertName);
+                homeFragment.parseAdapter.filter(searchQuery,spProductType.getText().toString().trim(),spcityType.getText().toString().trim(),spAdvertType.getText().toString().trim());
                 homeFragment.listView.invalidate();
 
                 return true;
@@ -549,7 +744,7 @@ public class MainActivity extends ActionBarActivity {
         }
         if (id == R.id.action_filter) {
 //            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show();
-            drawerLayout.closeDrawer(leftDrawerList);
+            drawerLayout.closeDrawer(leftDrawerLayout);
             if(drawerLayoutRight.isDrawerOpen(rightDrawerList)){
                 drawerLayoutRight.closeDrawer(rightDrawerList);
 
@@ -568,131 +763,261 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    public class CityAdapter extends ArrayAdapter<CityType>{
+    public class ProductSubAdapter extends BaseAdapter {
 
         Context context;
-        int layoutResourceId;
-        ArrayList<CityType> values;
-        // int android.R.Layout.
+        ArrayList<String> drawerTitleList;
 
-        public CityAdapter(Context context, int resource, ArrayList<CityType> objects) {
-            super(context, resource, objects);
+        public ProductSubAdapter(Context context, ArrayList<String> drawerTitleList) {
             this.context = context;
-            this.values=objects;
+            this.drawerTitleList = drawerTitleList;
+
         }
 
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        public int getCount() {
 
-            TextView txt = new TextView(MainActivity.this);
-            txt.setPadding(16,16,16,16);
-            txt.setTextSize(18);
-            txt.setGravity(Gravity.CENTER_VERTICAL);
-            txt.setText(values.get(position).cityName);
-            txt.setTextColor(Color.parseColor("#494949"));
-            return  txt;
+            return drawerTitleList.size();
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public Object getItem(int position) {
+            return drawerTitleList.get(position);
+        }
 
-            TextView txt = new TextView(MainActivity.this);
-            txt.setGravity(Gravity.CENTER_VERTICAL);
-            txt.setPadding(16,16,16,16);
-            txt.setTextSize(18);
-            txt.setText(values.get(position).cityName);
-            txt.setTextColor(Color.parseColor("#494949"));
-            return  txt;
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public class ViewHolder {
+            TextView drawerText;
+        }
+
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final ViewHolder holder;
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.item_list_dialog, parent,false);
+                holder = new ViewHolder();
+                holder.drawerText=(TextView)convertView.findViewById(R.id.txtItem);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.drawerText.setText(drawerTitleList.get(position));
+            return convertView;
         }
     }
 
-    public class AdvertAdapter extends ArrayAdapter<AdvertType>{
+    public class ProductAdapter extends BaseAdapter {
 
         Context context;
-        int layoutResourceId;
-        ArrayList<AdvertType> values;
-        // int android.R.Layout.
+        ArrayList<ProductType> drawerTitleList;
 
-        public AdvertAdapter(Context context, int resource, ArrayList<AdvertType> objects) {
-            super(context, resource, objects);
+        public ProductAdapter(Context context, ArrayList<ProductType> drawerTitleList) {
             this.context = context;
-            this.values=objects;
+            this.drawerTitleList = drawerTitleList;
+
         }
 
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        public int getCount() {
 
-            TextView txt = new TextView(MainActivity.this);
-            txt.setPadding(16,16,16,16);
-            txt.setTextSize(18);
-            txt.setGravity(Gravity.CENTER_VERTICAL);
-            txt.setText(values.get(position).AdvertName);
-            txt.setTextColor(Color.parseColor("#494949"));
-            return  txt;
+            return drawerTitleList.size();
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public Object getItem(int position) {
+            return drawerTitleList.get(position);
+        }
 
-            TextView txt = new TextView(MainActivity.this);
-            txt.setGravity(Gravity.CENTER_VERTICAL);
-            txt.setPadding(16,16,16,16);
-            txt.setTextSize(18);
-            txt.setText(values.get(position).AdvertName);
-            txt.setTextColor(Color.parseColor("#494949"));
-            return  txt;
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public class ViewHolder {
+            TextView drawerText;
+        }
+
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final ViewHolder holder;
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.item_list_dialog, parent,false);
+                holder = new ViewHolder();
+                holder.drawerText=(TextView)convertView.findViewById(R.id.txtItem);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.drawerText.setText(drawerTitleList.get(position).ProductName);
+            return convertView;
         }
     }
 
-    public class ProductAdapter extends ArrayAdapter<ProductType>{
+    public class CitySubAdapter extends BaseAdapter {
 
         Context context;
-        int layoutResourceId;
-        ArrayList<ProductType> values;
-        // int android.R.Layout.
+        ArrayList<String> drawerTitleList;
 
-        public ProductAdapter(Context context, int resource, ArrayList<ProductType> objects) {
-            super(context, resource, objects);
+        public CitySubAdapter(Context context, ArrayList<String> drawerTitleList) {
             this.context = context;
-            this.values=objects;
+            this.drawerTitleList = drawerTitleList;
+
         }
 
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        public int getCount() {
 
-            TextView txt = new TextView(MainActivity.this);
-            txt.setPadding(16,16,16,16);
-            txt.setTextSize(18);
-            txt.setGravity(Gravity.CENTER_VERTICAL);
-            txt.setText(values.get(position).ProductName);
-            txt.setTextColor(Color.parseColor("#494949"));
-            return  txt;
+            return drawerTitleList.size();
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public Object getItem(int position) {
+            return drawerTitleList.get(position);
+        }
 
-            TextView txt = new TextView(MainActivity.this);
-            txt.setGravity(Gravity.CENTER_VERTICAL);
-            txt.setPadding(16,16,16,16);
-            txt.setTextSize(18);
-            txt.setText(values.get(position).ProductName);
-            txt.setTextColor(Color.parseColor("#494949"));
-            return  txt;
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public class ViewHolder {
+            TextView drawerText;
+        }
+
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final ViewHolder holder;
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.item_list_dialog, parent,false);
+                holder = new ViewHolder();
+                holder.drawerText=(TextView)convertView.findViewById(R.id.txtItem);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.drawerText.setText(drawerTitleList.get(position));
+            return convertView;
+        }
+    }
+
+    public class CityAdapter extends BaseAdapter {
+
+        Context context;
+        ArrayList<CityType> drawerTitleList;
+
+        public CityAdapter(Context context, ArrayList<CityType> drawerTitleList) {
+            this.context = context;
+            this.drawerTitleList = drawerTitleList;
+
+        }
+
+        public int getCount() {
+
+            return drawerTitleList.size();
+        }
+
+        public Object getItem(int position) {
+            return drawerTitleList.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public class ViewHolder {
+            TextView drawerText;
+        }
+
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final ViewHolder holder;
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.item_list_dialog, parent,false);
+                holder = new ViewHolder();
+                holder.drawerText=(TextView)convertView.findViewById(R.id.txtItem);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.drawerText.setText(drawerTitleList.get(position).cityName);
+            return convertView;
+        }
+    }
+
+
+
+    public class AdvertAdapter extends BaseAdapter {
+
+        Context context;
+        ArrayList<AdvertType> drawerTitleList;
+
+        public AdvertAdapter(Context context, ArrayList<AdvertType> drawerTitleList) {
+            this.context = context;
+            this.drawerTitleList = drawerTitleList;
+
+        }
+
+        public int getCount() {
+
+            return drawerTitleList.size();
+        }
+
+        public Object getItem(int position) {
+            return drawerTitleList.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public class ViewHolder {
+            TextView drawerText;
+        }
+
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            final ViewHolder holder;
+            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
+            if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.item_list_dialog, parent,false);
+                holder = new ViewHolder();
+                holder.drawerText=(TextView)convertView.findViewById(R.id.txtItem);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.drawerText.setText(drawerTitleList.get(position).AdvertName);
+            return convertView;
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         SharedPreferences preferences = getSharedPreferences("filter", MODE_PRIVATE);
-        selectedCategory=preferences.getInt("category",0);
-        selectedCity=preferences.getInt("city",0);
-        selectedAdvert=preferences.getInt("advert",0);
-        spAdvertType.setSelection(selectedAdvert);
-        spcityType.setSelection(selectedCity);
-        spProductType.setSelection(selectedCategory);
+        selectedCategory=preferences.getString("category",categoryValue);
+        selectedCity=preferences.getString("city",cityValue);
+        selectedAdvert=preferences.getString("advert",advertValue);
+        spAdvertType.setText(selectedAdvert);
+        spcityType.setText(selectedCity);
+        spProductType.setText(selectedCategory);
+        try {
+            HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag("HomeFragment");
+            homeFragment.parseAdapter.filter(searchingValue, selectedCategory, selectedCity,selectedAdvert);
+            homeFragment.listView.invalidate();
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
 
     }
 

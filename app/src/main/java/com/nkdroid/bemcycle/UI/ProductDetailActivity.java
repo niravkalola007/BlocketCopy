@@ -16,8 +16,8 @@ import com.nkdroid.bemcycle.R;
 
 public class ProductDetailActivity extends ActionBarActivity {
     private Toolbar toolbar;
-    private String ptName,productDetail,date,name,mobile,email,imagePath;
-    private TextView productName,productDetails,detailDate,detailName,detailEmail,detailMobile;
+    private String ptName,productDetail,date,name,mobile,email,imagePath,post_code,object_id;
+    private TextView productName,productDetails,detailDate,detailName,detailEmail,detailMobile,txtDelete,txtMap;
     private ImageView deailImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,27 @@ public class ProductDetailActivity extends ActionBarActivity {
         mobile=intent.getStringExtra("mobile");
         email=intent.getStringExtra("email");
         imagePath=intent.getStringExtra("image_path");
+        post_code=intent.getStringExtra("post_data");
+        object_id=intent.getStringExtra("object_id");
 
+        txtDelete= (TextView) findViewById(R.id.txtDelete);
+        txtDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ProductDetailActivity.this,RemoveActivity.class);
+                intent.putExtra("object_id",object_id);
+                startActivity(intent);
+            }
+        });
+        txtMap= (TextView) findViewById(R.id.txtMap);
+        txtMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(ProductDetailActivity.this,MapActivity.class);
+                intent.putExtra("post_code",post_code);
+                startActivity(intent);
+            }
+        });
         productName= (TextView) findViewById(R.id.productName);
         productDetails= (TextView) findViewById(R.id.productDetails);
         detailDate= (TextView) findViewById(R.id.detailDate);

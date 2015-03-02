@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <include layout="@layout/app_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+        <TextView
+            android:paddingLeft="16dp"
+            android:id="@+id/productName"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:text="Remove or renew"
+            android:textSize="18sp"
+            android:textColor="#494949"
+            android:layout_height="wrap_content" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:paddingLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioRemove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="remove"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radioRenew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="renew" />
+            </RadioGroup>
+
+    <TextView
+        android:paddingLeft="16dp"
+
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:text="Email Address"
+        android:textSize="18sp"
+        android:textColor="#494949"
+        android:layout_height="wrap_content" />
+    <EditText
+        android:paddingLeft="16dp"
+
+        android:layout_marginTop="16dp"
+        android:textColor="#494949"
+        android:id="@+id/etEmail"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Email"
+        android:textSize="@dimen/normal_text"/>
+
+    <TextView
+
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:id="@+id/txtSubmit"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:text="Submit"
+        android:textSize="18sp"
+        android:textColor="#fff"
+        android:background="@color/primaryColor"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+    </ScrollView>
+</LinearLayout>

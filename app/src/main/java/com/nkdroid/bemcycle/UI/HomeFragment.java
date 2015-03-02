@@ -37,6 +37,7 @@ import com.nkdroid.bemcycle.custom.SharedPreferenceAdvertType;
 import com.nkdroid.bemcycle.custom.SharedPreferenceCityType;
 import com.nkdroid.bemcycle.custom.SharedPreferenceProductTypes;
 import com.nkdroid.bemcycle.model.AdvertType;
+import com.nkdroid.bemcycle.model.AppConstants;
 import com.nkdroid.bemcycle.model.CityType;
 import com.nkdroid.bemcycle.model.ProductType;
 import com.parse.FindCallback;
@@ -69,6 +70,11 @@ public class HomeFragment extends Fragment {
     private SharedPreferenceAdvertType sharedPreferenceAdvertType;
     private SharedPreferenceCityType sharedPreferenceCityType;
     SwipeRefreshLayout swipeView;
+    public static String categoryValue="Select Product Type";
+    public static String cityValue="Select City";
+    public static String advertValue="Select Advert Type";
+    private String selectedCategory,selectedCity,selectedAdvert;
+
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
 
@@ -121,7 +127,7 @@ public class HomeFragment extends Fragment {
                             cal.add(Calendar.DATE, -7);
                             for(int i=0;i<scoreList.size();i++){
                                 try {
-                                    if (simpleDateFormat.parse(scoreList.get(i).get("DateString").toString()).after(simpleDateFormat.parse(simpleDateFormat.format(cal.getTime())))) {
+                                    if (simpleDateFormat.parse(scoreList.get(i).get("DateString").toString()).after(simpleDateFormat.parse(simpleDateFormat.format(cal.getTime()))) && scoreList.get(i).get("status").toString().equalsIgnoreCase(AppConstants.APPROVED)) {
                                         newList.add(scoreList.get(i));
                                     }
 
@@ -200,7 +206,7 @@ public class HomeFragment extends Fragment {
                     cal.add(Calendar.DATE, -7);
                     for(int i=0;i<scoreList.size();i++){
                         try {
-                            if (simpleDateFormat.parse(scoreList.get(i).get("DateString").toString()).after(simpleDateFormat.parse(simpleDateFormat.format(cal.getTime())))) {
+                            if (simpleDateFormat.parse(scoreList.get(i).get("DateString").toString()).after(simpleDateFormat.parse(simpleDateFormat.format(cal.getTime()))) && scoreList.get(i).get("status").toString().equalsIgnoreCase(AppConstants.APPROVED)) {
                                 newList.add(scoreList.get(i));
                             }
 
@@ -211,6 +217,15 @@ public class HomeFragment extends Fragment {
 
                     parseAdapter=new ProductAdapter(getActivity(),newList);
                     listView.setAdapter(parseAdapter);
+
+                    SharedPreferences preferences = getActivity().getSharedPreferences("filter", getActivity().MODE_PRIVATE);
+                    selectedCategory=preferences.getString("category",categoryValue);
+                    selectedCity=preferences.getString("city",cityValue);
+                    selectedAdvert=preferences.getString("advert",advertValue);
+
+
+                        parseAdapter.filter("", selectedCategory, selectedCity,selectedAdvert);
+                       listView.invalidate();
 
 
 
@@ -307,6 +322,8 @@ public class HomeFragment extends Fragment {
                     intent.putExtra("mobile",sampleData.get(position).getNumber("Telefon")+"");
                     intent.putExtra("email",sampleData.get(position).getString("Epost")+"");
                     intent.putExtra("image_path",sampleData.get(position).getParseFile("ThumbnailImage").getUrl()+"");
+                    intent.putExtra("post_data",sampleData.get(position).getNumber("post_code")+"" );
+                    intent.putExtra("object_id",sampleData.get(position).getObjectId()+"" );
                     startActivity(intent);
                 }
             });

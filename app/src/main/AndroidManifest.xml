@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nkdroid.bemcycle" >
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -10,6 +11,23 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
+    <permission
+        android:name="com.nkdroid.blocketcopy.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.nkdroid.blocketcopy.permission.MAPS_RECEIVE" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Required to show current location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- Required OpenGL ES 2.0. for Maps V2 -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
     <!--
       IMPORTANT: Change "com.parse.tutorials.pushnotifications.permission.C2D_MESSAGE" in the lines below
       to match your app's package name + ".permission.C2D_MESSAGE".
@@ -26,6 +44,15 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- Goolge API Key -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyA8LR-lnYopaJAvzDYqko4u4Uzj3buCrDM" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <activity
             android:name=".UI.MainActivity"
             android:label="@string/app_name"
@@ -87,13 +114,21 @@
         </activity>
         <activity
             android:name=".UI.ProductDetailActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_product_detail" >
+            android:label="@string/title_activity_product_detail"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".UI.FullScreenImageActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_full_screen_image" >
+            android:label="@string/title_activity_full_screen_image"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".UI.RemoveActivity"
+            android:label="@string/title_activity_remove" >
+        </activity>
+        <activity
+            android:name=".UI.MapActivity"
+            android:label="@string/title_activity_map" >
         </activity>
     </application>
 

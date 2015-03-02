@@ -101,6 +101,32 @@
                 android:textColor="#494949"
 
                 android:layout_height="wrap_content" />
+
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/txtDelete"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:text="Remove/Renew"
+                android:textSize="18sp"
+                android:textColor="#fff"
+                android:background="@color/primaryColor"
+                android:padding="16dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/txtMap"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:text="Show On Map"
+                android:textSize="18sp"
+                android:textColor="#fff"
+                android:background="@color/primaryColor"
+                android:padding="16dp"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </ScrollView>

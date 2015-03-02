@@ -59,6 +59,17 @@
         android:layout_height="wrap_content"
         android:hint="Enter Advert Description"
         android:textSize="@dimen/normal_text"/>
+
+    <EditText
+        android:textColor="#494949"
+        android:id="@+id/etPostCode"
+        android:inputType="number"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Post Code"
+        android:textSize="@dimen/normal_text"/>
+
     <EditText
         android:textColor="#494949"
         android:focusable="false"
@@ -70,39 +81,76 @@
         android:layout_height="wrap_content"
         android:hint="Enter Date"
         android:textSize="@dimen/normal_text"/>
-
-    <Spinner
-        android:layout_marginTop="4dp"
-        android:spinnerMode="dialog"
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content">
+    <TextView
+        android:textSize="@dimen/normal_text"
+        android:layout_marginTop="8dp"
+        android:text="Select Advert Type"
+        android:textColor="#494949"
         android:id="@+id/spAdvertType"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         />
-    <Spinner
-        android:layout_marginTop="4dp"
-        android:spinnerMode="dialog"
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_down"/>
+</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+    <TextView
+        android:textSize="@dimen/normal_text"
+        android:layout_marginTop="8dp"
+       android:text="Select Product Type"
+        android:textColor="#494949"
         android:id="@+id/spProductType"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         />
-    <Spinner
-        android:layout_marginTop="4dp"
-        android:spinnerMode="dialog"
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_down"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+    <TextView
+        android:textSize="@dimen/normal_text"
+        android:layout_marginTop="8dp"
+        android:text="Select City"
+        android:textColor="#494949"
         android:id="@+id/spcityType"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         />
-
-
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_down"/>
+</LinearLayout>
     <ImageView
         android:id="@+id/imageUpload"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:src="@drawable/upload"
         android:padding="8dp"
         android:scaleType="centerCrop"
         android:layout_gravity="center"
         android:layout_width="200dp"
         android:layout_height="200dp" />
+
 
     <TextView
         android:id="@+id/txtSubmit"
